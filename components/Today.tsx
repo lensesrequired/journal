@@ -49,13 +49,14 @@ export const Today = () => {
     }
   }, [items, loadTimeTable]);
 
-  const replaceItems = (items: ScheduleItem[]) => {
+  const replaceItems = (items: ScheduleItem[], callback?: () => void) => {
     apiFetch(`/api/schedule/${date}`, {
       method: 'PUT',
       body: JSON.stringify({ items }),
     }).then((response) => {
       if (response.ok && response.data.success) {
         loadTimeTable();
+        callback && callback();
       } else {
         // TODO: show error
       }

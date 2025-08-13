@@ -8,7 +8,9 @@ export const cleanValues = (
           updatedForm[key] = value;
         }
       } else if (typeof value === 'object' || typeof value === 'boolean') {
-        updatedForm[key] = value;
+        if (value !== null) {
+          updatedForm[key] = value;
+        }
       } else if (!isNaN(value)) {
         updatedForm[key] = value;
       }

@@ -11,15 +11,16 @@ import {
   Portal,
   Stack,
 } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 type Props = {
   existingItems: ScheduleItem[];
-  replaceItems: (items: ScheduleItem[]) => void;
+  replaceItems: (items: ScheduleItem[], callback?: () => void) => void;
 };
 
 export const ItemModal = ({ existingItems, replaceItems }: Props) => {
+  const [open, setOpen] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -50,7 +51,9 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
     //   });
     // }
     const newItems = [newItem, ...existingItems];
-    replaceItems(newItems);
+    replaceItems(newItems, () => {
+      setOpen(false);
+    });
   });
 
   useEffect(() => {
@@ -60,7 +63,12 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
   });
 
   return (
-    <Dialog.Root placement="center" motionPreset="slide-in-bottom">
+    <Dialog.Root
+      placement="center"
+      motionPreset="slide-in-bottom"
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
       <Dialog.Trigger asChild>
         <Button width="100%">Add Item</Button>
       </Dialog.Trigger>
@@ -86,9 +94,22 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                       <Field.Label>Start Time</Field.Label>
                       <Input
                         {...register('startTime', {
-                          pattern: {
-                            value: /\d\d:\d\d/,
-                            message: 'Format hh:mm',
+                          validate: (value) => {
+                            return isNaN(value || NaN)
+                              ? 'Required format: hh:mm'
+                              : true;
+                          },
+                          min: { value: 0, message: 'Required format: hh:mm' },
+                          max: {
+                            value: 23.99,
+                            message: 'Required format: hh:mm',
+                          },
+                          setValueAs: (value): number => {
+                            const [hr, min] = (value || '').split(':');
+                            console.log(
+                              parseInt(hr, 10) + parseInt(min, 10) / 60,
+                            );
+                            return parseInt(hr, 10) + parseInt(min, 10) / 60;
                           },
                         })}
                         placeholder="format hh:mm"
@@ -102,9 +123,25 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                       <Field.Label>End Time</Field.Label>
                       <Input
                         {...register('endTime', {
-                          pattern: {
-                            value: /\d\d:\d\d/,
-                            message: 'Format hh:mm',
+                          validate: (value) => {
+                            if (value === null) {
+                              return true;
+                            }
+                            return isNaN(value || NaN)
+                              ? 'Required format: hh:mm'
+                              : true;
+                          },
+                          min: { value: 0, message: 'Required format: hh:mm' },
+                          max: {
+                            value: 23.99,
+                            message: 'Required format: hh:mm',
+                          },
+                          setValueAs: (value): number | null => {
+                            if (value === '') {
+                              return null;
+                            }
+                            const [hr, min] = (value || '').split(':');
+                            return parseInt(hr, 10) + parseInt(min, 10) / 60;
                           },
                         })}
                         placeholder="format hh:mm"
