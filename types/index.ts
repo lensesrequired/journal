@@ -12,3 +12,7 @@ export type ScheduleItem = {
   isTask?: boolean;
   isCompleted?: boolean;
 };
+
+export type Schedule = {
+  items: ScheduleItem[];
+};

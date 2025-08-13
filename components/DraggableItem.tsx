@@ -14,6 +14,12 @@ export const Item = forwardRef(
       id,
       description,
       isDone,
+      isTask,
+      startTime,
+      endTime,
+      duration,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isCompleted,
       ...props
     }: ItemProps & {
       style?: {
@@ -24,21 +30,21 @@ export const Item = forwardRef(
     ref: ForwardedRef<HTMLLabelElement>,
   ) => {
     const height =
-      ((props?.duration || 0) / 60 ||
-        (props?.endTime || props?.startTime || 0) - (props?.startTime || 0) ||
+      ((duration || 0) / 60 ||
+        (endTime || startTime || 0) - (startTime || 0) ||
         0.5) * 110;
 
     let display = '';
-    if (props.startTime) {
-      if (props.endTime) {
-        display = `(${decimalToTime(props.startTime)}-${decimalToTime(props.endTime)})`;
-      } else if (props.duration) {
-        display = `(${decimalToTime(props.startTime)}-${decimalToTime(props.startTime + props.duration / 60)})`;
+    if (startTime) {
+      if (endTime) {
+        display = `(${decimalToTime(startTime)}-${decimalToTime(endTime)})`;
+      } else if (duration) {
+        display = `(${decimalToTime(startTime)}-${decimalToTime(startTime + duration / 60)})`;
       } else {
-        display = `(${decimalToTime(props.startTime)})`;
+        display = `(${decimalToTime(startTime)})`;
       }
-    } else if (props.duration) {
-      display = `(${minutesToHoursString(props.duration)})`;
+    } else if (duration) {
+      display = `(${minutesToHoursString(duration)})`;
     }
 
     return (
@@ -56,7 +62,7 @@ export const Item = forwardRef(
             {description}
             {display && <Text color="gray">{display}</Text>}
           </CheckboxCard.Label>
-          {props.isTask && <CheckboxCard.Indicator />}
+          {isTask && <CheckboxCard.Indicator />}
         </CheckboxCard.Control>
       </CheckboxCard.Root>
     );

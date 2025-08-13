@@ -4,7 +4,6 @@ import withAuth from '@/components/withAuth';
 import { AuthProps } from '@/types';
 
 async function Home({ authed }: AuthProps) {
-  console.log(authed);
   if (authed) {
     return <Default />;
   }

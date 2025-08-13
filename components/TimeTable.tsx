@@ -20,28 +20,13 @@ import {
 } from '@dnd-kit/sortable';
 import { useState } from 'react';
 
-export const TimeTable = () => {
+type Props = {
+  existingItems: ScheduleItem[];
+  replaceItems: (items: ScheduleItem[]) => void;
+};
+
+export const TimeTable = ({ existingItems, replaceItems }: Props) => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [items, setItems] = useState<ScheduleItem[]>([
-    {
-      description: 'Morning Walk',
-      isTask: true,
-    },
-    {
-      description: 'Start Work',
-      startTime: 8.5,
-    },
-    {
-      description: 'Stand Up',
-      startTime: 10.25,
-      endTime: 10.5,
-    },
-    {
-      description: 'Lunch',
-      duration: 60,
-      isTask: true,
-    },
-  ]);
   const sensors = useSensors(
     useSensor(MouseSensor, {
       // Require the mouse to move by 10 pixels before activating
@@ -71,16 +56,14 @@ export const TimeTable = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex(
-          ({ description }) => description === active.id,
-        );
-        const newIndex = items.findIndex(
-          ({ description }) => description === over.id,
-        );
+      const oldIndex = existingItems.findIndex(
+        ({ description }) => description === active.id,
+      );
+      const newIndex = existingItems.findIndex(
+        ({ description }) => description === over.id,
+      );
 
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      replaceItems(arrayMove(existingItems, oldIndex, newIndex));
     }
   };
 
@@ -110,10 +93,10 @@ export const TimeTable = () => {
       collisionDetection={closestCenter}
     >
       <SortableContext
-        items={items.map(({ description }) => description)}
+        items={existingItems.map(({ description }) => description)}
         strategy={verticalListSortingStrategy}
       >
-        {items.map(({ description, ...rest }, index) => (
+        {existingItems.map(({ description, ...rest }, index) => (
           <DraggableItem
             key={index.toString()}
             id={description}
