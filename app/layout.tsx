@@ -22,8 +22,8 @@ async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const authProps = await getAuth();
 
   return (
-    <html lang="en">
-      <body className={`${outfit.className}`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${outfit.className}`}>
         <Provider>
           <Box
             py={3}
