@@ -32,7 +32,7 @@ export const simplify = (data: Record<string, any>): any => {
   } else if (data.BOOL || data.BOOL === false) {
     return data.BOOL;
   } else if (data.N || data.N === 0) {
-    return parseInt(data.N, 10);
+    return parseFloat(data.N);
   }
   return data;
 };

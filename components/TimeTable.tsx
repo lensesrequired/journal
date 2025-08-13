@@ -1,5 +1,9 @@
 import { DraggableItem, Item } from '@/components/DraggableItem';
+import { ItemModal } from '@/components/schedule/ItemModal';
+import { RemoveItemDroppable } from '@/components/schedule/RemoveItemDroppable';
+import { apiFetch } from '@/helpers/fetch';
 import { ScheduleItem } from '@/types';
+import { Alert } from '@chakra-ui/react';
 import {
   DndContext,
   DragEndEvent,
@@ -18,15 +22,68 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type Props = {
-  existingItems: ScheduleItem[];
-  replaceItems: (items: ScheduleItem[]) => void;
+  date: string;
 };
 
-export const TimeTable = ({ existingItems, replaceItems }: Props) => {
+export const TimeTable = ({ date }: Props) => {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [items, setItems] = useState<ScheduleItem[]>();
+
+  const loadTimeTable = useCallback(async () => {
+    setIsLoading(true);
+    apiFetch(`/api/schedule/${date}`, {}).then((response) => {
+      if (response.ok) {
+        setItems(response.data.items);
+        setError(null);
+      } else {
+        setError(response.error || 'Something went wrong. Please try again.');
+      }
+      setIsLoading(false);
+    });
+  }, [date]);
+
+  useEffect(() => {
+    if (!items) {
+      loadTimeTable();
+    }
+  }, [items, loadTimeTable]);
+
+  const replaceItems = (items: ScheduleItem[], callback?: () => void) => {
+    setItems(items);
+    apiFetch(`/api/schedule/${date}`, {
+      method: 'PUT',
+      body: JSON.stringify({ items }),
+    }).then((response) => {
+      if (response.ok && response.data.success) {
+        loadTimeTable();
+        if (callback) {
+          callback();
+        }
+      } else {
+        // TODO: show error
+      }
+    });
+  };
+
+  const updateItem = (index: number, update: ScheduleItem) => {
+    setItems(items);
+    apiFetch(`/api/schedule/${date}/items/${index}`, {
+      method: 'PUT',
+      body: JSON.stringify(update),
+    }).then((response) => {
+      if (response.ok && response.data.success) {
+        loadTimeTable();
+      } else {
+        // TODO: show error
+      }
+    });
+  };
+
   const sensors = useSensors(
     useSensor(MouseSensor, {
       // Require the mouse to move by 10 pixels before activating
@@ -55,16 +112,23 @@ export const TimeTable = ({ existingItems, replaceItems }: Props) => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id) {
-      const oldIndex = existingItems.findIndex(
-        ({ description }) => description === active.id,
-      );
-      const newIndex = existingItems.findIndex(
-        ({ description }) => description === over.id,
-      );
+    if (items && over && active.id !== over.id) {
+      if (over.id === 'remove-item') {
+        replaceItems(
+          items.filter(({ description }) => description !== active.id),
+        );
+      } else {
+        const oldIndex = items.findIndex(
+          ({ description }) => description === active.id,
+        );
+        const newIndex = items.findIndex(
+          ({ description }) => description === over.id,
+        );
 
-      replaceItems(arrayMove(existingItems, oldIndex, newIndex));
+        replaceItems(arrayMove(items, oldIndex, newIndex));
+      }
     }
+    setActiveId(null);
   };
 
   const isDone = (item: Partial<ScheduleItem>) => {
@@ -74,7 +138,7 @@ export const TimeTable = ({ existingItems, replaceItems }: Props) => {
     const currentHours = new Date().getHours();
     const currentMinutes = new Date().getMinutes();
     if (item.isTask) {
-      return item.isCompleted;
+      return item.isCompleted === true;
     }
     if (itemTime) {
       return (
@@ -93,15 +157,36 @@ export const TimeTable = ({ existingItems, replaceItems }: Props) => {
       collisionDetection={closestCenter}
     >
       <SortableContext
-        items={existingItems.map(({ description }) => description)}
+        items={(items || []).map(({ description }) => description)}
         strategy={verticalListSortingStrategy}
       >
-        {existingItems.map(({ description, ...rest }, index) => (
+        {error && (
+          <Alert.Root status="error">
+            <Alert.Indicator />
+            <Alert.Title>{error}</Alert.Title>
+          </Alert.Root>
+        )}
+        {!activeId ? (
+          <ItemModal existingItems={items || []} replaceItems={replaceItems} />
+        ) : (
+          <RemoveItemDroppable />
+        )}
+        {(items || []).map(({ description, ...rest }, index) => (
           <DraggableItem
             key={index.toString()}
             id={description}
             description={description}
             isDone={isDone(rest)}
+            isLoading={isLoading}
+            onChange={() => {
+              if (rest.isTask) {
+                updateItem(index, {
+                  description,
+                  ...rest,
+                  isCompleted: !rest.isCompleted,
+                });
+              }
+            }}
             {...rest}
           />
         ))}

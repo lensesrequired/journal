@@ -4,9 +4,15 @@ import { CheckboxCard } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ForwardedRef, forwardRef } from 'react';
+import { FormEvent, ForwardedRef, forwardRef } from 'react';
 
-type ItemProps = ScheduleItem & { key?: string; id: string; isDone?: boolean };
+type ItemProps = ScheduleItem & {
+  key?: string;
+  id: string;
+  isDone?: boolean;
+  isLoading?: boolean;
+  onChange?: (e: FormEvent<HTMLLabelElement>) => void;
+};
 
 export const Item = forwardRef(
   (
@@ -18,6 +24,8 @@ export const Item = forwardRef(
       startTime,
       endTime,
       duration,
+      isLoading,
+      onChange,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isCompleted,
       ...props
@@ -49,12 +57,15 @@ export const Item = forwardRef(
 
     return (
       <CheckboxCard.Root
+        variant="surface"
+        disabled={isLoading}
         ref={ref}
         id={id}
         {...props}
         minHeight="55px"
         height={`${height}px`}
         checked={isDone}
+        onChange={onChange}
       >
         <CheckboxCard.HiddenInput />
         <CheckboxCard.Control>

@@ -95,6 +95,9 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                       <Input
                         {...register('startTime', {
                           validate: (value) => {
+                            if (!value) {
+                              return true;
+                            }
                             return isNaN(value || NaN)
                               ? 'Required format: hh:mm'
                               : true;
@@ -104,11 +107,11 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                             value: 23.99,
                             message: 'Required format: hh:mm',
                           },
-                          setValueAs: (value): number => {
+                          setValueAs: (value): number | null => {
+                            if (typeof value !== 'string' || value === '') {
+                              return null;
+                            }
                             const [hr, min] = (value || '').split(':');
-                            console.log(
-                              parseInt(hr, 10) + parseInt(min, 10) / 60,
-                            );
                             return parseInt(hr, 10) + parseInt(min, 10) / 60;
                           },
                         })}
@@ -124,7 +127,7 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                       <Input
                         {...register('endTime', {
                           validate: (value) => {
-                            if (value === null) {
+                            if (typeof value !== 'string' || value === '') {
                               return true;
                             }
                             return isNaN(value || NaN)
