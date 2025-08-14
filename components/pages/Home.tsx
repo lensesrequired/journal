@@ -1,7 +1,7 @@
 'use client';
 
-import { Schedule } from '@/components/Schedule';
-import { Today } from '@/components/Today';
+import { Overview } from '@/components/home/Overview';
+import { Today } from '@/components/home/Today';
 import { Box, SegmentGroup } from '@chakra-ui/react';
 import { useState } from 'react';
 
@@ -13,7 +13,7 @@ export const Home = () => {
         <SegmentGroup.Indicator />
         <SegmentGroup.Items items={['Overview', 'Today']} />
       </SegmentGroup.Root>
-      {value === 'Overview' && <Schedule />}
+      {value === 'Overview' && <Overview />}
       {value === 'Today' && <Today />}
     </Box>
   );

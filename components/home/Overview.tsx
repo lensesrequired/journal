@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 
-export const Schedule = () => {
+export const Overview = () => {
   return (
     <Box
       p={5}

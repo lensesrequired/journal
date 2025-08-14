@@ -1,5 +1,5 @@
-import { Auth } from '@/components/Auth';
-import { Home as Default } from '@/components/Home';
+import { Auth } from '@/components/pages/Auth';
+import { Home as Default } from '@/components/pages/Home';
 import withAuth from '@/components/withAuth';
 import { AuthProps } from '@/types';
 

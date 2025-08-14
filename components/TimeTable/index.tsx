@@ -1,6 +1,6 @@
-import { DraggableItem, Item } from '@/components/DraggableItem';
-import { ItemModal } from '@/components/schedule/ItemModal';
-import { RemoveItemDroppable } from '@/components/schedule/RemoveItemDroppable';
+import { DraggableItem, Item } from '@/components/TimeTable/DraggableItem';
+import { ItemModal } from '@/components/TimeTable/ItemModal';
+import { RemoveItemDroppable } from '@/components/TimeTable/RemoveItemDroppable';
 import { apiFetch } from '@/helpers/fetch';
 import { ScheduleItem } from '@/types';
 import { Alert, Box } from '@chakra-ui/react';
