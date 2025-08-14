@@ -16,3 +16,8 @@ export type ScheduleItem = {
 export type Schedule = {
   items: ScheduleItem[];
 };
+
+export enum TimeTableType {
+  SCHEDULE = 'schedule',
+  TEMPLATE = 'template',
+}

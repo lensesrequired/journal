@@ -2,6 +2,7 @@
 
 import { Overview } from '@/components/home/Overview';
 import { Today } from '@/components/home/Today';
+import { capitalizeWords } from '@/helpers/string';
 import { Box, SegmentGroup } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -26,9 +27,7 @@ export const Home = ({}) => {
       >
         <SegmentGroup.Indicator />
         <SegmentGroup.Items
-          items={Object.values(View).map((view) =>
-            view.replace(/\b\w/g, (char) => char.toUpperCase()),
-          )}
+          items={Object.values(View).map((view) => capitalizeWords(view))}
         />
       </SegmentGroup.Root>
       {value === View.OVERVIEW && <Overview />}

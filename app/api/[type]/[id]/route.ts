@@ -1,27 +1,32 @@
+import { capitalizeWords } from '@/helpers/string';
 import { createParams, dbclient, simplifyItem } from '@/server/dynamodb';
-import { Schedule } from '@/types';
+import { Schedule, TimeTableType } from '@/types';
 import { PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ date: string }> },
+  { params }: { params: Promise<{ type: string; id: string }> },
 ): Promise<NextResponse<Schedule | { _message: string }>> {
   const { username } = JSON.parse(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
-  const { date } = await params;
+  const { type, id } = await params;
+  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+    return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
+  }
+  const formattedType = capitalizeWords(type);
 
   return dbclient
     .send(
       new QueryCommand(
         createParams({
           Limit: 1,
-          KeyConditionExpression: 'PK = :username AND SK = :schedule',
+          KeyConditionExpression: 'PK = :username AND SK = :resource',
           ExpressionAttributeValues: {
             ':username': { S: `USER#${username}` },
-            ':schedule': { S: `SCHEDULE#${date}` },
+            ':resource': { S: `${type.toUpperCase()}#${id}` },
           },
         }),
       ),
@@ -34,16 +39,16 @@ export async function GET(
         return NextResponse.json({ items: [] });
       }
 
-      console.log(`schedule lookup ${date} did not have items`, response);
+      console.log(`${formattedType} lookup ${id} did not have items`, response);
       return NextResponse.json(
-        { _message: 'Schedule lookup failed' },
+        { _message: `${formattedType} lookup failed` },
         { status: 500 },
       );
     })
     .catch((err) => {
-      console.log(`schedule lookup ${date}`, err);
+      console.log(`${formattedType} lookup ${id}`, err);
       return NextResponse.json(
-        { _message: 'Schedule lookup failed' },
+        { _message: `${formattedType} lookup failed` },
         { status: 500 },
       );
     });
@@ -51,12 +56,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ date: string }> },
+  { params }: { params: Promise<{ type: string; id: string }> },
 ): Promise<NextResponse<{ success: boolean } | { _message: string }>> {
   const { username } = JSON.parse(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
-  const { date } = await params;
+  const { type, id } = await params;
+  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+    return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
+  }
+  const formattedType = capitalizeWords(type);
   const { items } = await request.json();
 
   return dbclient
@@ -65,7 +74,7 @@ export async function PUT(
         createParams({
           Item: {
             PK: { S: `USER#${username}` },
-            SK: { S: `SCHEDULE#${date}` },
+            SK: { S: `${type.toUpperCase()}#${id}` },
             items: marshall({ items }).items,
           },
         }),
@@ -75,9 +84,9 @@ export async function PUT(
       return NextResponse.json({ success: true });
     })
     .catch((err) => {
-      console.log(`schedule replace ${date}`, err);
+      console.log(`${formattedType} replace ${id}`, err);
       return NextResponse.json(
-        { _message: 'Schedule update failed' },
+        { _message: `${formattedType} update failed` },
         { status: 500 },
       );
     });

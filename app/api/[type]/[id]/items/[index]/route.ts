@@ -1,16 +1,22 @@
+import { capitalizeWords } from '@/helpers/string';
 import { createParams, dbclient } from '@/server/dynamodb';
+import { TimeTableType } from '@/types';
 import { UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ date: string; index: number }> },
+  { params }: { params: Promise<{ type: string; id: string; index: number }> },
 ): Promise<NextResponse<{ success: boolean } | { _message: string }>> {
   const { username } = JSON.parse(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
-  const { date, index } = await params;
+  const { type, id, index } = await params;
+  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+    return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
+  }
+  const formattedType = capitalizeWords(type);
   const updatedItem = await request.json();
 
   return dbclient
@@ -19,7 +25,7 @@ export async function PUT(
         createParams({
           Key: {
             PK: { S: `USER#${username}` },
-            SK: { S: `SCHEDULE#${date}` },
+            SK: { S: `${type.toUpperCase()}#${id}` },
           },
           UpdateExpression: `SET #itemIndex[${index.toString()}] = :update`,
           ExpressionAttributeNames: {
@@ -35,9 +41,9 @@ export async function PUT(
       return NextResponse.json({ success: true });
     })
     .catch((err) => {
-      console.log(`schedule item update ${date}[${index}]`, err);
+      console.log(`${formattedType} item update ${id}[${index}]`, err);
       return NextResponse.json(
-        { _message: 'Schedule update failed' },
+        { _message: `${formattedType} update failed` },
         { status: 500 },
       );
     });

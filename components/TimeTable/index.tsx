@@ -2,7 +2,7 @@ import { DraggableItem, Item } from '@/components/TimeTable/DraggableItem';
 import { ItemModal } from '@/components/TimeTable/ItemModal';
 import { RemoveItemDroppable } from '@/components/TimeTable/RemoveItemDroppable';
 import { apiFetch } from '@/helpers/fetch';
-import { ScheduleItem } from '@/types';
+import { ScheduleItem, TimeTableType } from '@/types';
 import { Alert, Box } from '@chakra-ui/react';
 import {
   DndContext,
@@ -25,10 +25,11 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 
 type Props = {
-  date: string;
+  type: TimeTableType;
+  id: string;
 };
 
-export const TimeTable = ({ date }: Props) => {
+export const TimeTable = ({ type, id }: Props) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +37,7 @@ export const TimeTable = ({ date }: Props) => {
 
   const loadTimeTable = useCallback(async () => {
     setIsLoading(true);
-    apiFetch(`/api/schedule/${date}`, {}).then((response) => {
+    apiFetch(`/api/${type}/${id}`, {}).then((response) => {
       if (response.ok) {
         setItems(response.data.items);
         setError(null);
@@ -45,7 +46,7 @@ export const TimeTable = ({ date }: Props) => {
       }
       setIsLoading(false);
     });
-  }, [date]);
+  }, [id]);
 
   useEffect(() => {
     if (!items) {
@@ -55,7 +56,7 @@ export const TimeTable = ({ date }: Props) => {
 
   const replaceItems = (items: ScheduleItem[], callback?: () => void) => {
     setItems(items);
-    apiFetch(`/api/schedule/${date}`, {
+    apiFetch(`/api/${type}/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ items }),
     }).then((response) => {
@@ -72,7 +73,7 @@ export const TimeTable = ({ date }: Props) => {
 
   const updateItem = (index: number, update: ScheduleItem) => {
     setItems(items);
-    apiFetch(`/api/schedule/${date}/items/${index}`, {
+    apiFetch(`/api/${type}/${id}/items/${index}`, {
       method: 'PUT',
       body: JSON.stringify(update),
     }).then((response) => {
