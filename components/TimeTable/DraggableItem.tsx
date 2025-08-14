@@ -1,7 +1,7 @@
 import { TimerModal } from '@/components/TimerModal';
 import { decimalToTime, minutesToHoursString } from '@/helpers/time';
 import { ScheduleItem } from '@/types';
-import { CheckboxCard, Link, Text } from '@chakra-ui/react';
+import { CheckboxCard, Text } from '@chakra-ui/react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FormEvent, ForwardedRef, forwardRef } from 'react';

@@ -34,6 +34,7 @@ export const config = {
     '/api/schedule/:id/items/:index',
     '/api/template/:id/items/:index',
     '/api/template/:id/items/:index',
+    '/api/templates',
   ],
   runtime: 'nodejs',
 };

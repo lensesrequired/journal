@@ -1,5 +1,5 @@
 import { apiFetch } from '@/helpers/fetch';
-import { Schedule, ScheduleItem, TimeTableType } from '@/types';
+import { ScheduleItem, TimeTableType } from '@/types';
 import React, {
   ReactNode,
   createContext,
