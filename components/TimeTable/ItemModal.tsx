@@ -28,6 +28,7 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
     watch,
     setValue,
     control,
+    reset,
   } = useForm<ScheduleItem>({ mode: 'onBlur' });
   const startTime = watch('startTime');
   const endTime = watch('endTime');
@@ -60,7 +61,13 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
     if (startTime && endTime) {
       setValue('duration', undefined);
     }
-  });
+  }, [startTime, endTime, setValue]);
+
+  useEffect(() => {
+    if (open) {
+      reset();
+    }
+  }, [open, reset]);
 
   return (
     <Dialog.Root
@@ -140,7 +147,7 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
                             message: 'Required format: hh:mm',
                           },
                           setValueAs: (value): number | null => {
-                            if (value === '') {
+                            if (typeof value !== 'string' || value === '') {
                               return null;
                             }
                             const [hr, min] = (value || '').split(':');

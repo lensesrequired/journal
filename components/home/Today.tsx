@@ -1,5 +1,6 @@
 import { TimeTable } from '@/components/TimeTable';
-import { TimeTableType } from '@/types';
+import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
+import { ScheduleItem, TimeTableType } from '@/types';
 import { Box, Button } from '@chakra-ui/react';
 
 export const Today = () => {
@@ -18,7 +19,9 @@ export const Today = () => {
         <Box display="grid" gap={2}>
           Schedule
           <Button width="100%">Use Template</Button>
-          <TimeTable type={TimeTableType.SCHEDULE} id={date} />
+          <TimeTableProvider type={TimeTableType.SCHEDULE} id={date}>
+            <TimeTable type={TimeTableType.SCHEDULE} id={date} />
+          </TimeTableProvider>
         </Box>
       </Box>
       <Box gridColumn={2} gridRow={1}>

@@ -1,9 +1,10 @@
 import { DraggableItem, Item } from '@/components/TimeTable/DraggableItem';
 import { ItemModal } from '@/components/TimeTable/ItemModal';
 import { RemoveItemDroppable } from '@/components/TimeTable/RemoveItemDroppable';
+import { useTimeTableContext } from '@/components/TimeTable/TimeTableContext';
 import { apiFetch } from '@/helpers/fetch';
 import { ScheduleItem, TimeTableType } from '@/types';
-import { Alert, Box } from '@chakra-ui/react';
+import { Alert, Stack } from '@chakra-ui/react';
 import {
   DndContext,
   DragEndEvent,
@@ -22,7 +23,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   type: TimeTableType;
@@ -31,28 +32,8 @@ type Props = {
 
 export const TimeTable = ({ type, id }: Props) => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<ScheduleItem[]>();
-
-  const loadTimeTable = useCallback(async () => {
-    setIsLoading(true);
-    apiFetch(`/api/${type}/${id}`, {}).then((response) => {
-      if (response.ok) {
-        setItems(response.data.items);
-        setError(null);
-      } else {
-        setError(response.error || 'Something went wrong. Please try again.');
-      }
-      setIsLoading(false);
-    });
-  }, [id]);
-
-  useEffect(() => {
-    if (!items) {
-      loadTimeTable();
-    }
-  }, [items, loadTimeTable]);
+  const { isLoading, error, items, setItems, loadTimeTable } =
+    useTimeTableContext();
 
   const replaceItems = (items: ScheduleItem[], callback?: () => void) => {
     setItems(items);
@@ -151,7 +132,7 @@ export const TimeTable = ({ type, id }: Props) => {
   };
 
   return (
-    <Box display="grid" gap={2}>
+    <Stack>
       <DndContext
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
@@ -176,30 +157,32 @@ export const TimeTable = ({ type, id }: Props) => {
           ) : (
             <RemoveItemDroppable />
           )}
-          {(items || []).map(({ description, ...rest }, index) => (
-            <DraggableItem
-              key={index.toString()}
-              id={description}
-              description={description}
-              isDone={isDone(rest)}
-              isLoading={isLoading}
-              onChange={() => {
-                if (rest.isTask) {
-                  updateItem(index, {
-                    description,
-                    ...rest,
-                    isCompleted: !rest.isCompleted,
-                  });
-                }
-              }}
-              {...rest}
-            />
-          ))}
+          <Stack display="grid" flex={1}>
+            {(items || []).map(({ description, ...rest }, index) => (
+              <DraggableItem
+                key={index.toString()}
+                id={description}
+                description={description}
+                isDone={type === TimeTableType.SCHEDULE ? isDone(rest) : false}
+                isLoading={isLoading}
+                onChange={() => {
+                  if (rest.isTask) {
+                    updateItem(index, {
+                      description,
+                      ...rest,
+                      isCompleted: !rest.isCompleted,
+                    });
+                  }
+                }}
+                {...rest}
+              />
+            ))}
+          </Stack>
         </SortableContext>
         <DragOverlay>
           {activeId ? <Item id={activeId} description={activeId} /> : null}
         </DragOverlay>
       </DndContext>
-    </Box>
+    </Stack>
   );
 };

@@ -34,7 +34,9 @@ export async function GET(
     .then((response) => {
       if (response.Items) {
         if (response.Items.length) {
-          return NextResponse.json(simplifyItem(response.Items[0]) as Schedule);
+          return NextResponse.json({
+            items: simplifyItem(response.Items[0]).items,
+          } as Schedule);
         }
         return NextResponse.json({ items: [] });
       }

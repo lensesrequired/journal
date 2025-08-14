@@ -1,12 +1,12 @@
 import { ProfileMenu } from '@/components/ProfileMenu';
 import { Provider } from '@/components/ui/provider';
 import { getAuth } from '@/components/withAuth';
-// import './globals.scss';
 import { Box, Heading } from '@chakra-ui/react';
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import './globals.scss';
 
 const outfit = Outfit({
   weight: '400',

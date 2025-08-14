@@ -2,6 +2,7 @@
 
 import { AuthProps } from '@/types';
 import { Avatar, Icon, Menu, Portal } from '@chakra-ui/react';
+import { LuLayoutTemplate } from 'react-icons/lu';
 import { MdLogout } from 'react-icons/md';
 
 export const ProfileMenu = ({ displayName }: AuthProps) => {
@@ -15,6 +16,15 @@ export const ProfileMenu = ({ displayName }: AuthProps) => {
       <Portal>
         <Menu.Positioner>
           <Menu.Content>
+            <Menu.Item asChild value="/templates">
+              <a href={'/templates'}>
+                <Icon>
+                  <LuLayoutTemplate fontSize="small" />
+                </Icon>
+                Templates
+              </a>
+            </Menu.Item>
+            <Menu.Separator />
             <Menu.Item asChild value="/logout">
               <a href={'/logout'} target="_blank" rel="noreferrer">
                 <Icon>
