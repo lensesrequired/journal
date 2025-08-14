@@ -3,7 +3,7 @@ import { ItemModal } from '@/components/schedule/ItemModal';
 import { RemoveItemDroppable } from '@/components/schedule/RemoveItemDroppable';
 import { apiFetch } from '@/helpers/fetch';
 import { ScheduleItem } from '@/types';
-import { Alert } from '@chakra-ui/react';
+import { Alert, Box } from '@chakra-ui/react';
 import {
   DndContext,
   DragEndEvent,
@@ -150,50 +150,55 @@ export const TimeTable = ({ date }: Props) => {
   };
 
   return (
-    <DndContext
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}
-      collisionDetection={closestCenter}
-    >
-      <SortableContext
-        items={(items || []).map(({ description }) => description)}
-        strategy={verticalListSortingStrategy}
+    <Box display="grid" gap={2}>
+      <DndContext
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+        collisionDetection={closestCenter}
       >
-        {error && (
-          <Alert.Root status="error">
-            <Alert.Indicator />
-            <Alert.Title>{error}</Alert.Title>
-          </Alert.Root>
-        )}
-        {!activeId ? (
-          <ItemModal existingItems={items || []} replaceItems={replaceItems} />
-        ) : (
-          <RemoveItemDroppable />
-        )}
-        {(items || []).map(({ description, ...rest }, index) => (
-          <DraggableItem
-            key={index.toString()}
-            id={description}
-            description={description}
-            isDone={isDone(rest)}
-            isLoading={isLoading}
-            onChange={() => {
-              if (rest.isTask) {
-                updateItem(index, {
-                  description,
-                  ...rest,
-                  isCompleted: !rest.isCompleted,
-                });
-              }
-            }}
-            {...rest}
-          />
-        ))}
-      </SortableContext>
-      <DragOverlay>
-        {activeId ? <Item id={activeId} description={activeId} /> : null}
-      </DragOverlay>
-    </DndContext>
+        <SortableContext
+          items={(items || []).map(({ description }) => description)}
+          strategy={verticalListSortingStrategy}
+        >
+          {error && (
+            <Alert.Root status="error">
+              <Alert.Indicator />
+              <Alert.Title>{error}</Alert.Title>
+            </Alert.Root>
+          )}
+          {!activeId ? (
+            <ItemModal
+              existingItems={items || []}
+              replaceItems={replaceItems}
+            />
+          ) : (
+            <RemoveItemDroppable />
+          )}
+          {(items || []).map(({ description, ...rest }, index) => (
+            <DraggableItem
+              key={index.toString()}
+              id={description}
+              description={description}
+              isDone={isDone(rest)}
+              isLoading={isLoading}
+              onChange={() => {
+                if (rest.isTask) {
+                  updateItem(index, {
+                    description,
+                    ...rest,
+                    isCompleted: !rest.isCompleted,
+                  });
+                }
+              }}
+              {...rest}
+            />
+          ))}
+        </SortableContext>
+        <DragOverlay>
+          {activeId ? <Item id={activeId} description={activeId} /> : null}
+        </DragOverlay>
+      </DndContext>
+    </Box>
   );
 };

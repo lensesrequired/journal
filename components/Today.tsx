@@ -13,10 +13,12 @@ export const Today = () => {
       gridAutoRows="minmax(120px, auto)"
       gap={5}
     >
-      <Box gridColumn={1} gridRow={'1 / span 3'} display="grid" gap={2}>
-        Schedule
-        <Button width="100%">Use Template</Button>
-        <TimeTable date={date} />
+      <Box gridColumn={1} gridRow={'1 / span 3'}>
+        <Box display="grid" gap={2}>
+          Schedule
+          <Button width="100%">Use Template</Button>
+          <TimeTable date={date} />
+        </Box>
       </Box>
       <Box gridColumn={2} gridRow={1}>
         <Button width="100%">Add Todo</Button>
