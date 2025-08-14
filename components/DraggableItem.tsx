@@ -1,7 +1,7 @@
+import { TimerModal } from '@/components/TimerModal';
 import { decimalToTime, minutesToHoursString } from '@/helpers/time';
 import { ScheduleItem } from '@/types';
-import { CheckboxCard } from '@chakra-ui/react';
-import { Text } from '@chakra-ui/react';
+import { CheckboxCard, Link, Text } from '@chakra-ui/react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FormEvent, ForwardedRef, forwardRef } from 'react';
@@ -73,6 +73,9 @@ export const Item = forwardRef(
             {description}
             {display && <Text color="gray">{display}</Text>}
           </CheckboxCard.Label>
+          {duration && (
+            <TimerModal description={description} duration={duration} />
+          )}
           {isTask && <CheckboxCard.Indicator />}
         </CheckboxCard.Control>
       </CheckboxCard.Root>
