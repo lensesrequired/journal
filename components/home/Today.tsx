@@ -1,6 +1,6 @@
 import { TimeTable } from '@/components/TimeTable';
 import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
-import { ScheduleItem, TimeTableType } from '@/types';
+import { TimeTableType } from '@/types';
 import { Box, Button } from '@chakra-ui/react';
 
 export const Today = () => {
