@@ -1,7 +1,8 @@
 import { TimeTable } from '@/components/TimeTable';
 import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
+import { UseTemplateModal } from '@/components/templates/UseTemplateModal';
 import { TimeTableType } from '@/types';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 
 export const Today = () => {
   const date = new Date().toISOString().split('T')[0];
@@ -17,10 +18,12 @@ export const Today = () => {
     >
       <Box gridColumn={1} gridRow={'1 / span 3'}>
         <Box display="grid" gap={2}>
-          Schedule
-          <Button width="100%">Use Template</Button>
+          <Heading as="h5" size="md">
+            Schedule
+          </Heading>
           <TimeTableProvider type={TimeTableType.SCHEDULE} id={date}>
-            <TimeTable type={TimeTableType.SCHEDULE} id={date} />
+            <UseTemplateModal />
+            <TimeTable />
           </TimeTableProvider>
         </Box>
       </Box>

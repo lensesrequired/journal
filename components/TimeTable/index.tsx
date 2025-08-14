@@ -25,14 +25,9 @@ import {
 } from '@dnd-kit/sortable';
 import { useState } from 'react';
 
-type Props = {
-  type: TimeTableType;
-  id: string;
-};
-
-export const TimeTable = ({ type, id }: Props) => {
+export const TimeTable = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const { isLoading, error, items, setItems, loadTimeTable } =
+  const { isLoading, error, items, setItems, loadTimeTable, type, id } =
     useTimeTableContext();
 
   const replaceItems = (items: ScheduleItem[], callback?: () => void) => {

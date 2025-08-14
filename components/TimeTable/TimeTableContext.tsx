@@ -17,6 +17,8 @@ type TimeTableContextType = {
   items: ScheduleItem[];
   setItems: (items: ScheduleItem[]) => void;
   loadTimeTable: () => Promise<void>;
+  type: TimeTableType;
+  id: string;
 };
 
 const Context = createContext<TimeTableContextType | undefined>(undefined);
@@ -67,6 +69,8 @@ export const TimeTableProvider = ({
         items: items || [],
         setItems,
         loadTimeTable,
+        type,
+        id,
       }}
     >
       {children}

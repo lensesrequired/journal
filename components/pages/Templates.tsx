@@ -9,7 +9,7 @@ import { HStack, Heading, Stack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 
 export const Templates = ({}) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [templates, setTemplates] = useState<Record<string, Schedule>>();
 
   const loadTemplates = useCallback(async () => {
@@ -58,7 +58,7 @@ export const Templates = ({}) => {
                 <Heading as="h5" size="lg">
                   {id}
                 </Heading>
-                <TimeTable type={TimeTableType.TEMPLATE} id={id} />
+                <TimeTable />
               </Stack>
             </TimeTableProvider>
           ))}
