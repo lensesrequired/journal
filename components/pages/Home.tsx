@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 enum View {
   TODAY = 'today',
-  OVERVIEW = 'upcoming',
+  OVERVIEW = 'overview',
 }
 
 export const Home = ({}) => {

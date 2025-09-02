@@ -56,7 +56,7 @@ export const Overview = () => {
         display="grid"
         gridTemplateRows="auto auto 1fr"
       >
-        <Heading as="h1" size="2xl">
+        <Heading as="h3" size="2xl">
           Calendar
         </Heading>
         <HStack justifyContent="flex-start">

@@ -1,11 +1,12 @@
 import { Auth } from '@/components/pages/Auth';
-import { Home as Default } from '@/components/pages/Home';
 import withAuth from '@/components/withAuth';
 import { AuthProps } from '@/types';
+import { RedirectType, redirect } from 'next/navigation';
 
 async function Home({ authed }: AuthProps) {
   if (authed) {
-    return <Default />;
+    redirect('/schedule', RedirectType.replace);
+    return null;
   }
   return <Auth />;
 }

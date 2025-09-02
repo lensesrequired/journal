@@ -1,7 +1,8 @@
+import { HeaderNav } from '@/components/HeaderNav';
 import { ProfileMenu } from '@/components/ProfileMenu';
 import { Provider } from '@/components/ui/provider';
 import { getAuth } from '@/components/withAuth';
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, HStack, Heading } from '@chakra-ui/react';
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import Link from 'next/link';
@@ -27,7 +28,7 @@ async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
         <Provider>
           <Box
             py={3}
-            px={4}
+            px={8}
             m={1}
             bgColor="cyan.700"
             style={{
@@ -36,11 +37,15 @@ async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
               borderRadius: '.5rem',
             }}
           >
-            <Link href="/">
-              <Heading as="h1" size="4xl">
-                Journal
-              </Heading>
-            </Link>
+            <HStack gap={12}>
+              <Link href="/">
+                <Heading as="h1" size="4xl">
+                  Journal
+                </Heading>
+              </Link>
+
+              <HeaderNav />
+            </HStack>
             {authProps.authed && <ProfileMenu {...authProps} />}
           </Box>
           {children}
