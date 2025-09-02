@@ -10,7 +10,7 @@ const cookieSettings = (env: string) => ({
   path: '/',
   secure: env !== 'development',
   sameSite: env !== 'development' ? 'none' : undefined,
-  expires: new Date(new Date().setDate(new Date().getDate() + 1)),
+  expires: new Date(new Date().setDate(new Date().getDate() + 7)),
 });
 
 export async function GET(request: NextRequest) {
