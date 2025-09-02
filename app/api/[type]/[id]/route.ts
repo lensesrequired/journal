@@ -1,7 +1,11 @@
 import { capitalizeWords } from '@/helpers/string';
 import { createParams, dbclient, simplifyItem } from '@/server/dynamodb';
 import { Schedule, TimeTableType } from '@/types';
-import { PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import {
+  DeleteItemCommand,
+  PutItemCommand,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -89,6 +93,42 @@ export async function PUT(
       console.log(`${formattedType} replace ${id}`, err);
       return NextResponse.json(
         { _message: `${formattedType} update failed` },
+        { status: 500 },
+      );
+    });
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ type: string; id: string }> },
+): Promise<NextResponse<{ success: boolean } | { _message: string }>> {
+  const { username } = JSON.parse(
+    decodeURIComponent(request.cookies.get('info')?.value || '{}'),
+  );
+  const { type, id } = await params;
+  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+    return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
+  }
+  const formattedType = capitalizeWords(type);
+
+  return dbclient
+    .send(
+      new DeleteItemCommand(
+        createParams({
+          Key: {
+            PK: { S: `USER#${username}` },
+            SK: { S: `${type.toUpperCase()}#${id}` },
+          },
+        }),
+      ),
+    )
+    .then(() => {
+      return NextResponse.json({ success: true });
+    })
+    .catch((err) => {
+      console.log(`${formattedType} delete ${id}`, err);
+      return NextResponse.json(
+        { _message: `${formattedType} delete failed` },
         { status: 500 },
       );
     });

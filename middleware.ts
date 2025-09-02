@@ -32,7 +32,7 @@ export const config = {
   matcher: [
     '/api/schedule/:id',
     '/api/schedule/:id/items/:index',
-    '/api/template/:id/items/:index',
+    '/api/template/:id',
     '/api/template/:id/items/:index',
     '/api/templates',
   ],
