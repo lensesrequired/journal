@@ -104,13 +104,13 @@ export const Overview = () => {
         </HStack>
       </Stack>
       <Box gridColumn={2} gridRow={1}>
-        Upcoming Events
+        To Do
       </Box>
       <Box gridColumn={2} gridRow={2}>
-        Habits
+        Upcoming Events
       </Box>
       <Box gridColumn={2} gridRow={3}>
-        Today Preview
+        Habits
       </Box>
     </Box>
   );

@@ -51,7 +51,7 @@ export const ItemModal = ({ existingItems, replaceItems }: Props) => {
     //     return false
     //   });
     // }
-    const newItems = [newItem, ...existingItems];
+    const newItems = [...existingItems, newItem];
     replaceItems(newItems, () => {
       setOpen(false);
     });

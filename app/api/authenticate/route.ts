@@ -16,15 +16,20 @@ const cookieSettings = (env: string) => ({
 export async function GET(request: NextRequest) {
   const authCookie = request.cookies.get('auth');
 
-  if (authCookie?.value) {
-    const token = jwt.verify(
-      authCookie?.value,
-      process.env.JWT_SECRET as jwt.Secret,
-    );
-    return NextResponse.json(token);
-  }
+  try {
+    if (authCookie?.value) {
+      const token = jwt.verify(
+        authCookie?.value,
+        process.env.JWT_SECRET as jwt.Secret,
+      );
+      return NextResponse.json(token);
+    }
 
-  return NextResponse.json({ authed: false }, { status: 401 });
+    return NextResponse.json({ authed: false }, { status: 401 });
+  } catch (error) {
+    console.log('auth ckeck error', error);
+    return NextResponse.json({ authed: false }, { status: 401 });
+  }
 }
 
 export async function POST(request: NextRequest) {
