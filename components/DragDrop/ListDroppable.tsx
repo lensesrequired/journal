@@ -1,6 +1,5 @@
 import { DraggableItem, Item } from '@/components/DragDrop/DraggableItem';
 import { RemoveItemDroppable } from '@/components/DragDrop/RemoveItemDroppable';
-import { ItemModal } from '@/components/TimeTable/ItemModal';
 import { ScheduleItem } from '@/types';
 import { Stack } from '@chakra-ui/react';
 import {
@@ -21,23 +20,27 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 
-type Props = {
+type Props<ItemType extends ScheduleItem> = {
   isLoading: boolean;
-  items: ScheduleItem[];
-  replaceItems: (items: ScheduleItem[], callback?: () => void) => void;
-  updateItem: (index: number, items: ScheduleItem) => void;
+  items: ItemType[];
+  replaceItems: (items: ItemType[], callback?: () => void) => void;
+  updateItem: (index: number, items: ItemType) => void;
   allIncompleteItems?: boolean;
+  children?: ReactNode;
 };
 
-export const ListDroppable = ({
+export const ListDroppable: <ItemType extends ScheduleItem>(
+  props: Props<ItemType>,
+) => ReactElement = ({
   isLoading,
   items,
   replaceItems,
   updateItem,
   allIncompleteItems,
-}: Props) => {
+  children,
+}) => {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -117,34 +120,30 @@ export const ListDroppable = ({
           items={(items || []).map(({ description }) => description)}
           strategy={verticalListSortingStrategy}
         >
-          {!activeId ? (
-            <ItemModal
-              existingItems={items || []}
-              replaceItems={replaceItems}
-            />
-          ) : (
-            <RemoveItemDroppable />
-          )}
+          {!activeId ? children : <RemoveItemDroppable />}
           <Stack display="grid" flex={1}>
-            {(items || []).map(({ description, ...rest }, index) => (
-              <DraggableItem
-                key={index.toString()}
-                id={description}
-                description={description}
-                isDone={allIncompleteItems ? false : isDone(rest)}
-                isLoading={isLoading}
-                onChange={() => {
-                  if (rest.isTask) {
-                    updateItem(index, {
-                      description,
-                      ...rest,
-                      isCompleted: !rest.isCompleted,
-                    });
-                  }
-                }}
-                {...rest}
-              />
-            ))}
+            {(items || []).map((item, index) => {
+              const { description, ...rest } = item;
+              return (
+                <DraggableItem
+                  key={index.toString()}
+                  id={description}
+                  description={description}
+                  isDone={allIncompleteItems ? false : isDone(rest)}
+                  isLoading={isLoading}
+                  onChange={() => {
+                    if (rest.isTask) {
+                      updateItem(index, {
+                        description,
+                        ...rest,
+                        isCompleted: !rest.isCompleted,
+                      } as typeof item);
+                    }
+                  }}
+                  {...rest}
+                />
+              );
+            })}
           </Stack>
         </SortableContext>
         <DragOverlay>

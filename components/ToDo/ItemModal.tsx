@@ -1,0 +1,184 @@
+import { cleanValues } from '@/helpers/form';
+import { ScheduleItem, ToDoItem } from '@/types';
+import {
+  Button,
+  CloseButton,
+  Dialog,
+  Field,
+  HStack,
+  Input,
+  Portal,
+  Stack,
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+type Props = {
+  existingItems: ToDoItem[];
+  replaceItems: (items: ToDoItem[], callback?: () => void) => void;
+};
+
+export const ItemModal = ({ existingItems, replaceItems }: Props) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+    watch,
+    setValue,
+    reset,
+  } = useForm<ScheduleItem>({ mode: 'onBlur' });
+  const startTime = watch('startTime');
+  const endTime = watch('endTime');
+
+  const onSubmit = handleSubmit((data) => {
+    const newItem = cleanValues({ ...data, isTask: true }) as ToDoItem;
+    const newItems = [...existingItems, newItem];
+    replaceItems(newItems, () => {
+      setOpen(false);
+    });
+  });
+
+  useEffect(() => {
+    if (startTime && endTime) {
+      setValue('duration', undefined);
+    }
+  }, [startTime, endTime, setValue]);
+
+  useEffect(() => {
+    if (open) {
+      reset();
+    }
+  }, [open, reset]);
+
+  return (
+    <Dialog.Root
+      placement="center"
+      motionPreset="slide-in-bottom"
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
+      <Dialog.Trigger asChild>
+        <Button width="100%">Add Item</Button>
+      </Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <form onSubmit={onSubmit}>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Add Schedule Item</Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <Stack gap="4" align="flex-start" minW="md">
+                  <Field.Root invalid={!!errors.description}>
+                    <Field.Label>Description</Field.Label>
+                    <Input {...register('description', { required: true })} />
+                    <Field.ErrorText>
+                      {errors.description?.message}
+                    </Field.ErrorText>
+                  </Field.Root>
+                  <HStack gap="4" align="flex-start" minW="md">
+                    <Field.Root invalid={!!errors.startTime}>
+                      <Field.Label>Start Time</Field.Label>
+                      <Input
+                        {...register('startTime', {
+                          validate: (value) => {
+                            if (!value) {
+                              return true;
+                            }
+                            return isNaN(value || NaN)
+                              ? 'Required format: hh:mm'
+                              : true;
+                          },
+                          min: { value: 0, message: 'Required format: hh:mm' },
+                          max: {
+                            value: 23.99,
+                            message: 'Required format: hh:mm',
+                          },
+                          setValueAs: (value): number | null => {
+                            if (typeof value !== 'string' || value === '') {
+                              return null;
+                            }
+                            const [hr, min] = (value || '').split(':');
+                            return parseInt(hr, 10) + parseInt(min, 10) / 60;
+                          },
+                        })}
+                        placeholder="format hh:mm"
+                      />
+                      <Field.ErrorText>
+                        {errors.startTime?.message}
+                      </Field.ErrorText>
+                    </Field.Root>
+
+                    <Field.Root invalid={!!errors.endTime}>
+                      <Field.Label>End Time</Field.Label>
+                      <Input
+                        {...register('endTime', {
+                          validate: (value) => {
+                            if (typeof value !== 'string' || value === '') {
+                              return true;
+                            }
+                            return isNaN(value || NaN)
+                              ? 'Required format: hh:mm'
+                              : true;
+                          },
+                          min: { value: 0, message: 'Required format: hh:mm' },
+                          max: {
+                            value: 23.99,
+                            message: 'Required format: hh:mm',
+                          },
+                          setValueAs: (value): number | null => {
+                            if (typeof value !== 'string' || value === '') {
+                              return null;
+                            }
+                            const [hr, min] = (value || '').split(':');
+                            return parseInt(hr, 10) + parseInt(min, 10) / 60;
+                          },
+                        })}
+                        placeholder="format hh:mm"
+                      />
+                      <Field.ErrorText>
+                        {errors.endTime?.message}
+                      </Field.ErrorText>
+                    </Field.Root>
+                  </HStack>
+                  <Field.Root
+                    invalid={!!errors.duration}
+                    disabled={!!startTime && !!endTime}
+                  >
+                    <Field.Label>Duration (in minutes)</Field.Label>
+                    <Input
+                      type="number"
+                      {...register('duration', {
+                        valueAsNumber: true,
+                      })}
+                    />
+                    <Field.ErrorText>
+                      {errors.duration?.message}
+                    </Field.ErrorText>
+                  </Field.Root>
+                </Stack>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.ActionTrigger asChild>
+                  <Button variant="outline">Cancel</Button>
+                </Dialog.ActionTrigger>
+                <Button
+                  type="submit"
+                  disabled={!isValid}
+                  loading={isSubmitting}
+                >
+                  Save
+                </Button>
+              </Dialog.Footer>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton size="sm" />
+              </Dialog.CloseTrigger>
+            </Dialog.Content>
+          </form>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  );
+};

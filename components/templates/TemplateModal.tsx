@@ -1,5 +1,5 @@
 import { apiFetch } from '@/helpers/fetch';
-import { TimeTableType } from '@/types';
+import { ResourceType } from '@/types';
 import {
   Alert,
   Button,
@@ -32,7 +32,7 @@ export const TemplateModal = ({ reloadTemplates }: Props) => {
   }, [open, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const resp = await apiFetch(`/api/${TimeTableType.TEMPLATE}/${data.id}`, {
+    const resp = await apiFetch(`/api/${ResourceType.TEMPLATE}/${data.id}`, {
       method: 'PUT',
       body: JSON.stringify({ items: [] }),
     });

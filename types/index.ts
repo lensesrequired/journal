@@ -14,14 +14,15 @@ export type ScheduleItem = {
 };
 
 export type ToDoItem = ScheduleItem & {
-  isTask?: true;
+  isTask: true;
 };
 
 export type Schedule = {
   items: ScheduleItem[];
 };
 
-export enum TimeTableType {
+export enum ResourceType {
   SCHEDULE = 'schedule',
   TEMPLATE = 'template',
+  TODO = 'todo',
 }

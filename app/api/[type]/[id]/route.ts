@@ -1,6 +1,6 @@
 import { capitalizeWords } from '@/helpers/string';
 import { createParams, dbclient, simplifyItem } from '@/server/dynamodb';
-import { Schedule, TimeTableType } from '@/types';
+import { ResourceType, Schedule } from '@/types';
 import {
   DeleteItemCommand,
   PutItemCommand,
@@ -17,7 +17,7 @@ export async function GET(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
   const { type, id } = await params;
-  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+  if (!Object.values(ResourceType).includes(type as ResourceType)) {
     return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
   }
   const formattedType = capitalizeWords(type);
@@ -68,7 +68,7 @@ export async function PUT(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
   const { type, id } = await params;
-  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+  if (!Object.values(ResourceType).includes(type as ResourceType)) {
     return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
   }
   const formattedType = capitalizeWords(type);
@@ -106,7 +106,7 @@ export async function DELETE(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
   const { type, id } = await params;
-  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+  if (!Object.values(ResourceType).includes(type as ResourceType)) {
     return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
   }
   const formattedType = capitalizeWords(type);

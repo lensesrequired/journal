@@ -1,7 +1,8 @@
 import { ListDroppable } from '@/components/DragDrop/ListDroppable';
+import { ItemModal } from '@/components/TimeTable/ItemModal';
 import { useTimeTableContext } from '@/components/TimeTable/TimeTableContext';
 import { apiFetch } from '@/helpers/fetch';
-import { ScheduleItem, TimeTableType } from '@/types';
+import { ResourceType, ScheduleItem } from '@/types';
 import { Alert, Stack } from '@chakra-ui/react';
 
 export const TimeTable = () => {
@@ -52,8 +53,10 @@ export const TimeTable = () => {
         items={items}
         replaceItems={replaceItems}
         updateItem={updateItem}
-        allIncompleteItems={type === TimeTableType.TEMPLATE}
-      />
+        allIncompleteItems={type === ResourceType.TEMPLATE}
+      >
+        <ItemModal existingItems={items} replaceItems={replaceItems} />
+      </ListDroppable>
     </Stack>
   );
 };

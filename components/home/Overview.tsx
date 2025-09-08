@@ -1,7 +1,8 @@
 import { TimeTable } from '@/components/TimeTable';
 import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
+import { ToDoList } from '@/components/ToDo';
 import { UseTemplateModal } from '@/components/templates/UseTemplateModal';
-import { TimeTableType } from '@/types';
+import { ResourceType } from '@/types';
 import { Box, HStack, Heading, Input, Stack } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 
@@ -86,7 +87,7 @@ export const Overview = () => {
             ? dates.map((id) => (
                 <TimeTableProvider
                   key={id}
-                  type={TimeTableType.SCHEDULE}
+                  type={ResourceType.SCHEDULE}
                   id={id}
                 >
                   <Stack minWidth={'300px'} maxWidth={'500px'} flex={1}>
@@ -104,7 +105,12 @@ export const Overview = () => {
         </HStack>
       </Stack>
       <Box gridColumn={2} gridRow={1}>
-        To Do
+        <Stack>
+          <Heading as="h3" size="2xl">
+            To Do
+          </Heading>
+          <ToDoList />
+        </Stack>
       </Box>
       <Box gridColumn={2} gridRow={2}>
         Upcoming Events

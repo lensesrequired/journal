@@ -1,8 +1,9 @@
 import { TimeTable } from '@/components/TimeTable';
 import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
+import { ToDoList } from '@/components/ToDo';
 import { UseTemplateModal } from '@/components/templates/UseTemplateModal';
-import { TimeTableType } from '@/types';
-import { Box, Button, Heading } from '@chakra-ui/react';
+import { ResourceType } from '@/types';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 
 export const Today = () => {
   const date = new Date().toISOString().split('T')[0];
@@ -21,14 +22,19 @@ export const Today = () => {
           <Heading as="h5" size="md">
             Schedule
           </Heading>
-          <TimeTableProvider type={TimeTableType.SCHEDULE} id={date}>
+          <TimeTableProvider type={ResourceType.SCHEDULE} id={date}>
             <UseTemplateModal />
             <TimeTable />
           </TimeTableProvider>
         </Box>
       </Box>
       <Box gridColumn={2} gridRow={1}>
-        <Button width="100%">Add Todo</Button>
+        <Stack>
+          <Heading as="h3" size="2xl">
+            To Do
+          </Heading>
+          <ToDoList />
+        </Stack>
       </Box>
       <Box gridColumn={2} gridRow={2}>
         Habits

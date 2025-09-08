@@ -1,6 +1,6 @@
 import { capitalizeWords } from '@/helpers/string';
 import { createParams, dbclient } from '@/server/dynamodb';
-import { TimeTableType } from '@/types';
+import { ResourceType } from '@/types';
 import { UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,7 +13,7 @@ export async function PUT(
     decodeURIComponent(request.cookies.get('info')?.value || '{}'),
   );
   const { type, id, index } = await params;
-  if (!Object.values(TimeTableType).includes(type as TimeTableType)) {
+  if (!Object.values(ResourceType).includes(type as ResourceType)) {
     return NextResponse.json({ _message: 'Route not found' }, { status: 404 });
   }
   const formattedType = capitalizeWords(type);

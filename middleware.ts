@@ -35,6 +35,8 @@ export const config = {
     '/api/template/:id',
     '/api/template/:id/items/:index',
     '/api/templates',
+    '/api/todo/:id',
+    '/api/todo/:id/items/:index',
   ],
   runtime: 'nodejs',
 };

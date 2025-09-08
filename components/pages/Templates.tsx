@@ -4,7 +4,7 @@ import { TimeTable } from '@/components/TimeTable';
 import { TimeTableProvider } from '@/components/TimeTable/TimeTableContext';
 import { TemplateModal } from '@/components/templates/TemplateModal';
 import { apiFetch } from '@/helpers/fetch';
-import { Schedule, TimeTableType } from '@/types';
+import { ResourceType, Schedule } from '@/types';
 import { Button, HStack, Heading, Stack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
@@ -64,7 +64,7 @@ export const Templates = ({}) => {
           Object.entries(templates || {}).map(([id, { items }]) => (
             <TimeTableProvider
               key={id}
-              type={TimeTableType.TEMPLATE}
+              type={ResourceType.TEMPLATE}
               id={id}
               initialItems={items}
             >

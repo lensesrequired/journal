@@ -1,6 +1,6 @@
 import { useTimeTableContext } from '@/components/TimeTable/TimeTableContext';
 import { apiFetch } from '@/helpers/fetch';
-import { Schedule, TimeTableType } from '@/types';
+import { ResourceType, Schedule } from '@/types';
 import {
   Alert,
   Button,
@@ -52,7 +52,7 @@ export const UseTemplateModal = () => {
   }, [open, loadTemplates, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const resp = await apiFetch(`/api/${TimeTableType.SCHEDULE}/${id}`, {
+    const resp = await apiFetch(`/api/${ResourceType.SCHEDULE}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(templates[data.template]),
     });

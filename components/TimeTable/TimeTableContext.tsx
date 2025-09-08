@@ -1,5 +1,5 @@
 import { apiFetch } from '@/helpers/fetch';
-import { ScheduleItem, TimeTableType } from '@/types';
+import { ResourceType, ScheduleItem } from '@/types';
 import React, {
   ReactNode,
   createContext,
@@ -17,7 +17,7 @@ type TimeTableContextType = {
   items: ScheduleItem[];
   setItems: (items: ScheduleItem[]) => void;
   loadTimeTable: () => Promise<void>;
-  type: TimeTableType;
+  type: ResourceType;
   id: string;
 };
 
@@ -30,7 +30,7 @@ export const TimeTableProvider = ({
   initialItems,
 }: {
   children: ReactNode;
-  type: TimeTableType;
+  type: ResourceType;
   id: string;
   initialItems?: ScheduleItem[];
 }) => {
